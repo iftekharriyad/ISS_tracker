@@ -36,10 +36,8 @@
     </div>
 
 <script>
-     getISS()
+  
     const intervalId= window.setInterval(getISS,1000);
-    
-    
     const api_url='https://api.wheretheiss.at/v1/satellites/25544'
 
     //Creating a map
@@ -53,7 +51,7 @@
                     attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     });
     tiles.addTo(ISSmap);
-
+    
     // Adding ISS marker
      const ISSIcon = L.icon({
          iconUrl: '/ISS_0.png',
@@ -84,7 +82,7 @@
         let time= new Date(timestamp*1000)
         
         //Getting ISS local time zone offset
-        let res= await fetch(`http://api.geonames.org/timezoneJSON?lat=${lat}1&lng=${lon}&username=iftekharriyad`)
+        let res= await fetch(`http://api.geonames.org/timezoneJSON?lat=${lat}1&lng=${lon}&username=riyadif7`)
         let da= await res.json()
         let offset= await da.gmtOffset
         
@@ -157,6 +155,7 @@
             document.getElementById('visi').parentElement.parentElement.style.backgroundColor='darkslategrey'
             document.getElementById('visi').parentElement.parentElement.style.color='white'
         }
+        getISS()
         
      }
 
