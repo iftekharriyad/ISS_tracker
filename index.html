@@ -10,21 +10,23 @@
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
    crossorigin=""></script>
    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
-    <title>Fetch JSON from API and map lat lon</title>
+   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+    <title>Live ISS(International Space Station) tracker</title>
     <style>
         #mapid{
             height: 450px;
+            max-height: 100vh;
         }
     </style>
 </head>
 <body>
     <div class="container-fluid mt-4 mb-4 pl-4 pr-4">
-        <h1>Where is the ISS?</h1>
-        <div class="row mt-4">
+        <h1>Track ISS <span class="badge badge-danger">LIVE</span></h1>
+        <div id="map-container" class="row mt-4">
          
             <div id="mapid" class="col mr-2 ml-3"></div>
             <ul class="list-group col-12 col-md-3 pr-3 pl-3 mr-md-1 ml-md-1 mt-md-0 mt-3">
-                <li class="list-group-item"><p>Time in ISS(UTC<span id="offset"></span>): <span id="hours"></span>:<span id="min"></span>:<span id="sec"></span></p></li>
+                <li class="list-group-item"><p>Time in ISS(UTC +00): <span id="hours"></span>:<span id="min"></span>:<span id="sec"></span></p></li>
                 <li class="list-group-item"><p>Latitude: <span id="lat"></span>˚</p></li>
                 <li class="list-group-item"><p>Londitude: <span id="lon"></span>˚</p></li>
                 <li class="list-group-item"><p>Altitude: <span id="alt"></span> miles</p></li>
@@ -74,6 +76,7 @@
         let timestamp=data.timestamp
         let visibility=data.visibility
           
+        
         //Upading the marker lat&lon and map viewpoint
         marker.setLatLng([lat,lon])
         ISSmap.setView([lat,lon])
@@ -82,57 +85,57 @@
         let time= new Date(timestamp*1000)
         
         //Getting ISS local time zone offset
-        let res= await fetch(`http://api.geonames.org/timezoneJSON?lat=${lat}1&lng=${lon}&username=riyadif7`)
-        let da= await res.json()
-        let offset= await da.gmtOffset
+        // let res= await fetch(`http://api.geonames.org/timezoneJSON?lat=${lat}1&lng=${lon}&username=riyadif7`)
+        // let da= await res.json()
+        // let offset= await da.gmtOffset
         
-        let timezone='';
-        //Checking if the offset is provided
-        if(typeof(offset)==typeof(2)){
+        // let timezone='';
+        // //Checking if the offset is provided
+        // if(typeof(offset)==typeof(2)){
 
-            //updating hours with offset
-            let hours=time.getUTCHours()+offset
-            document.getElementById('hours').textContent=hours
+        //     //updating hours with offset
+        //     let hours=time.getUTCHours()+offset
+        //     document.getElementById('hours').textContent=hours
 
             //checking if the offset is less then 10
-            if(offset<10){
+        //     if(offset<10){
                 
-                if(offset<0){
-                let l= offset.toString().split('')
-                if(l.length>2){
-                    for(let i=0;i<l.length;i++){
-                    timezone+=l[i]
-                    }
-                }else{
-                    l.splice(1,0,'0')
-                    for(let i=0;i<l.length;i++){
-                    timezone+=l[i]
-                    }
-                }
-                } else{
-                    let l= offset.toString().split('')
-                    l.splice(0,0,'+','0')
-                    for(let i=0;i<l.length;i++){
-                    timezone+=l[i]
-                    }
-                }
+        //         if(offset<0){
+        //         let l= offset.toString().split('')
+        //         if(l.length>2){
+        //             for(let i=0;i<l.length;i++){
+        //             timezone+=l[i]
+        //             }
+        //         }else{
+        //             l.splice(1,0,'0')
+        //             for(let i=0;i<l.length;i++){
+        //             timezone+=l[i]
+        //             }
+        //         }
+        //         } else{
+        //             let l= offset.toString().split('')
+        //             l.splice(0,0,'+','0')
+        //             for(let i=0;i<l.length;i++){
+        //             timezone+=l[i]
+        //             }
+        //         }
             
-            }else{
-            let l=offset.toString()
-            timezone='+'+l
-            }
+        //     }else{
+        //     let l=offset.toString()
+        //     timezone='+'+l
+        //     }
            
-        }else{
-            let hours=time.getUTCHours()
-            document.getElementById('hours').textContent=hours
-            timezone='+00'
-        }
+        // }else{
+        //     let hours=time.getUTCHours()
+        //     document.getElementById('hours').textContent=hours
+        //     timezone='+00'
+        // }
         
         
-        //Getting minutes and seconds.
-        //Note: We are getting them in UTC here since minutes and seconds are the same in all timezones       
-         let min= time.getUTCMinutes()
-         let sec=time.getUTCSeconds()
+        //Getting hours, minutes and seconds.
+          let hours=time.getUTCHours()      
+          let min= time.getUTCMinutes()
+          let sec=time.getUTCSeconds()
 
 
       
@@ -141,24 +144,25 @@
         document.getElementById('lon').textContent=lon.toFixed(2)
         document.getElementById('vel').textContent=vel.toFixed(2)
         document.getElementById('alt').textContent=alt.toFixed(2)
-        document.getElementById('offset').textContent=timezone
+        //document.getElementById('offset').textContent=timezone
+        document.getElementById('hours').textContent=hours
         document.getElementById('min').textContent=min
         document.getElementById('sec').textContent=sec
         document.getElementById('visi').textContent=visibility
 
         //Checking Visibility
         if(visibility=='daylight'){
-            document.getElementById('visi').parentElement.parentElement.style.backgroundColor='yellow'
-            document.getElementById('visi').parentElement.parentElement.style.color='black'
-        }
-        else{
-            document.getElementById('visi').parentElement.parentElement.style.backgroundColor='darkslategrey'
-            document.getElementById('visi').parentElement.parentElement.style.color='white'
-        }
-        getISS()
+             document.getElementById('visi').parentElement.parentElement.style.backgroundColor='yellow'
+             document.getElementById('visi').parentElement.parentElement.style.color='black'
+         }
+         else{
+             document.getElementById('visi').parentElement.parentElement.style.backgroundColor='darkslategrey'
+             document.getElementById('visi').parentElement.parentElement.style.color='white'
+         }
+       
         
      }
-
+     getISS()
     
      
 </script>
